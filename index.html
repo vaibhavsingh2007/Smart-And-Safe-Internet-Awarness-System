@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="SmartGuard cybersecurity awareness demo with learning tools, personal dashboard, scam-report workflow and admin analytics.">
+<title>SmartGuard - Internet Safety Awareness</title>
+<style>
+
+  /* ---------- Reset & base ---------- */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html { scroll-behavior: smooth; }
+  section[id] { scroll-margin-top: 90px; }
+  .guest-link[hidden] { display: none !important; }
+
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f5f8ff;
+    color: #172033;
+    line-height: 1.6;
+  }
+
+  /* ---------- Navbar ---------- */
+  .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 7%;
+    background: rgba(255, 255, 255, .95);
+    border-bottom: 1px solid #e5e9f2;
+  }
+
+  .logo { font-size: 22px; font-weight: 800; }
+  .nav-links { display: flex; gap: 25px; }
+  .nav-links a { text-decoration: none; color: #34405a; font-weight: 600; }
+  .nav-links a:hover { color: #3157d5; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    min-height: 600px;
+    padding: 80px 8%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+    background: linear-gradient(135deg, #eef3ff, #ffffff);
+  }
+
+  .hero h1 {
+    font-size: clamp(45px, 7vw, 76px);
+    line-height: 1.05;
+    margin: 10px 0 22px;
+  }
+
+  .hero h1 span { color: #3157d5; }
+  .tag { color: #3157d5; font-weight: 800; letter-spacing: 2px; font-size: 13px; }
+  .hero-text { max-width: 650px; color: #5b667b; font-size: 18px; margin-bottom: 30px; }
+
+  .btn, button {
+    display: inline-block;
+    border: 0;
+    border-radius: 10px;
+    padding: 12px 18px;
+    background: #3157d5;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .btn { text-decoration: none; }
+  button:hover, .btn:hover { background: #2545b0; }
+
+  .shield {
+    width: 260px;
+    height: 260px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 20px 60px rgba(49, 87, 213, .18);
+    font-size: 120px;
+  }
+
+  /* ---------- Sections ---------- */
+  .section { padding: 85px 8%; }
+  .section-heading { text-align: center; margin-bottom: 45px; }
+  .section-heading h2 { font-size: 38px; margin-top: 5px; }
+
+  /* ---------- Tool cards ---------- */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+  }
+
+  .card {
+    background: white;
+    border: 1px solid #e2e7f0;
+    border-radius: 18px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(30, 45, 80, .06);
+  }
+  .icon { font-size: 35px; margin-bottom: 10px; }
+  .card h3 { font-size: 22px; margin-bottom: 8px; }
+  .card p { color: #69758a; margin-bottom: 17px; }
+
+  input, textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 12px;
+    border: 1px solid #ccd4e2;
+    border-radius: 9px;
+    font: inherit;
+    outline: none;
+  }
+  input:focus, textarea:focus { border-color: #3157d5; }
+
+  .result {
+    margin-top: 14px;
+    padding: 10px;
+    border-radius: 8px;
+    display: none;
+    font-size: 14px;
+  }
+  .safe    { display: block; background: #e8f8ef; color: #14733e; }
+  .warning { display: block; background: #fff4db; color: #8a5a00; }
+  .danger  { display: block; background: #ffe9e9; color: #a52222; }
+
+  .strength-bar {
+    height: 9px;
+    background: #e7ebf2;
+    border-radius: 20px;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  #strengthFill { height: 100%; width: 0%; transition: .3s; }
+
+  /* ---------- Quiz ---------- */
+  .quiz-section { background: #edf2ff; }
+  .quiz-box {
+    max-width: 760px;
+    margin: auto;
+    background: white;
+    padding: 30px;
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(30, 45, 80, .08);
+  }
+  #questionNumber { color: #3157d5; font-weight: 800; margin-bottom: 8px; }
+  #question { margin-bottom: 20px; font-size: 22px; }
+
+  .option {
+    width: 100%;
+    margin: 8px 0;
+    text-align: left;
+    background: #f7f9fd;
+    color: #172033;
+    border: 1px solid #dce2ed;
+  }
+  .option:hover { background: #eef3ff; }
+  .option.correct { background: #dff6e8; border-color: #45a96d; }
+  .option.wrong   { background: #ffe1e1; border-color: #d75b5b; }
+  #nextBtn { margin-top: 15px; }
+  #quizResult { margin-top: 15px; font-weight: 700; }
+
+  /* ---------- Tips ---------- */
+  .tips-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .tip {
+    display: flex;
+    gap: 18px;
+    background: white;
+    padding: 25px;
+    border-radius: 16px;
+    border: 1px solid #e2e7f0;
+  }
+  .tip span { font-size: 35px; }
+  .tip h3 { margin-bottom: 5px; }
+  .tip p { color: #69758a; }
+
+  /* ---------- Footer ---------- */
+  footer { text-align: center; padding: 35px 8%; background: #172033; color: white; }
+  footer .small { color: #aeb7c8; margin-top: 5px; font-size: 13px; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 850px) {
+    .navbar { flex-direction: column; gap: 12px; }
+    .nav-links { gap: 14px; flex-wrap: wrap; justify-content: center; }
+    .hero { text-align: center; flex-direction: column; }
+    .cards, .tips-grid { grid-template-columns: 1fr; }
+    .shield { width: 190px; height: 190px; font-size: 85px; }
+  }
+
+  :root { --ink:#182b3d; --muted:#657789; --brand:#087f78; --brand-dark:#06645f; --accent:#d8f3ed; --line:#dce7e8; --surface:#ffffff; --canvas:#f4f8f7; --shadow:0 18px 50px rgba(25,55,65,.08); }
+  body { font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; background:var(--canvas); color:var(--ink); }
+  .navbar { padding:14px max(5%, calc((100% - 1180px)/2)); background:rgba(255,255,255,.92); backdrop-filter:blur(14px); border-bottom:1px solid var(--line); }
+  .logo { color:var(--ink); letter-spacing:-.5px; }
+  .nav-links { align-items:center; gap:22px; }
+  .nav-links a { color:#526678; font-size:14px; transition:color .2s ease; }
+  .nav-links a:hover { color:var(--brand); }
+  .hero { min-height:500px; padding:84px max(7%, calc((100% - 1120px)/2)); background:radial-gradient(ellipse at 82% 48%, #d9f3ee 0, transparent 33%),linear-gradient(135deg,#f4faf8 0%,#fff 70%); }
+  .hero > div:first-child { max-width:650px; }
+  .hero h1 { color:#173044; font-size:clamp(42px,6vw,68px); letter-spacing:-2.8px; line-height:1.04; }
+  .hero h1 span { color:var(--brand); }
+  .tag { color:var(--brand); letter-spacing:1.6px; }
+  .hero-text { max-width:570px; font-size:17px; line-height:1.75; color:var(--muted); }
+  .btn, button { border-radius:11px; padding:13px 19px; background:var(--brand); transition:transform .18s ease, background .18s ease, box-shadow .18s ease; }
+  .btn:hover, button:hover { background:var(--brand-dark); box-shadow:0 8px 18px rgba(8,127,120,.18); transform:translateY(-1px); }
+  .shield { width:240px; height:240px; border-radius:38% 62% 55% 45% / 45% 42% 58% 55%; background:linear-gradient(145deg,#fff,#e5f7f2); border:1px solid #d8eeea; box-shadow:0 24px 60px rgba(8,127,120,.14); color:var(--brand); }
+  .section { max-width:1280px; margin:auto; padding:76px 6%; }
+  .section-heading { margin-bottom:38px; }
+  .section-heading h2 { color:#193448; font-size:clamp(30px,4vw,38px); letter-spacing:-1px; }
+  .cards { grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; }
+  .card { border:1px solid var(--line); border-radius:18px; padding:26px; box-shadow:0 8px 24px rgba(25,55,65,.035); transition:transform .2s ease, box-shadow .2s ease; }
+  .card:hover { transform:translateY(-3px); box-shadow:var(--shadow); }
+  .icon { display:grid; place-items:center; width:52px; height:52px; margin-bottom:18px; border-radius:15px; background:#e8f6f2; font-size:27px; }
+  .card h3 { color:#193448; }
+  .card p,.tip p { color:var(--muted); line-height:1.65; }
+  input,textarea { border-color:#d6e1e4; border-radius:10px; background:#fbfdfd; padding:13px 14px; color:var(--ink); }
+  input:focus,textarea:focus { border-color:var(--brand); box-shadow:0 0 0 3px rgba(8,127,120,.12); }
+  .result { border-radius:10px; line-height:1.5; }
+  .quiz-section { max-width:none; background:#eaf5f2; }
+  .quiz-section > .section-heading,.quiz-section > .quiz-box { max-width:900px; margin-left:auto; margin-right:auto; }
+  .quiz-box { border:1px solid var(--line); border-radius:20px; padding:32px; box-shadow:var(--shadow); }
+  #questionNumber { color:var(--brand); }
+  .option { border-radius:11px; padding:14px 16px; }
+  .option:hover { background:#edf8f5; }
+  #nextBtn:disabled { opacity:.5; cursor:not-allowed; box-shadow:none; transform:none; }
+  .tips-grid { gap:16px; }
+  .tip { border:1px solid var(--line); border-radius:16px; box-shadow:0 6px 20px rgba(25,55,65,.03); }
+  .tip span { display:grid; place-items:center; flex:0 0 52px; width:52px; height:52px; border-radius:15px; background:#e8f6f2; font-size:27px; }
+  footer { background:#173044; }
+  .checklist { max-width:1050px; margin:-24px auto 0; padding:0 6%; }
+  .checklist-card { display:grid; grid-template-columns:.8fr 1.2fr; gap:32px; align-items:center; padding:25px 28px; background:white; border:1px solid var(--line); border-radius:18px; box-shadow:var(--shadow); }
+  .checklist-title { color:#193448; font-size:20px; margin-bottom:5px; }
+  .checklist-copy { color:var(--muted); font-size:14px; }
+  .checklist-meter { height:8px; margin-top:14px; overflow:hidden; background:#e8efef; border-radius:20px; }
+  .checklist-meter span { display:block; width:0; height:100%; background:var(--brand); border-radius:inherit; transition:width .25s ease; }
+  .checklist-items { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+  .checklist-item { display:flex; align-items:flex-start; gap:9px; color:#42596b; font-size:13px; line-height:1.45; }
+  .checklist-item input { width:17px; height:17px; flex:0 0 17px; margin:1px 0 0; accent-color:var(--brand); }
+  @media(max-width:850px) { .navbar { padding:14px 5%; } .nav-links { gap:10px 16px; } .hero { padding:64px 7%; } .cards { grid-template-columns:1fr; } .checklist { margin:0 auto; padding:24px 6% 0; } .checklist-card { grid-template-columns:1fr; gap:20px; } }
+  @media(max-width:560px) { .nav-links a { font-size:13px; } .hero h1 { letter-spacing:-1.8px; } .checklist-items { grid-template-columns:1fr; } .quiz-box { padding:22px; } }
+  @media(prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto!important; transition:none!important; } }
+  .skip-link { position:absolute; left:12px; top:-60px; z-index:99; padding:10px 14px; background:#fff; color:#173044; border:2px solid var(--brand); border-radius:8px; }
+  .skip-link:focus { top:12px; }
+  .access-tools { display:flex; justify-content:flex-end; align-items:center; gap:8px; max-width:1180px; margin:8px auto; padding:0 5%; color:var(--muted); font-size:12px; }
+  .access-tools button { padding:6px 10px; border:1px solid var(--line); background:#fff; color:var(--ink); font-size:12px; }
+  .access-tools button:focus-visible,a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible { outline:3px solid #d27e12; outline-offset:3px; }
+  .section-intro { max-width:680px; margin:12px auto 0; color:var(--muted); }
+  .learning-cards blockquote { margin:14px 0; padding:15px; border-left:3px solid var(--brand); background:#f2f8f6; border-radius:0 10px 10px 0; color:#294657; font-weight:600; }
+  .example-label,.progress-label { color:var(--brand); font-size:11px; font-weight:800; letter-spacing:1.2px; }
+  .learning-progress { max-width:900px; margin:0 auto 20px; display:grid; grid-template-columns:1.5fr repeat(3,1fr); gap:14px; align-items:center; padding:20px 24px; background:white; border:1px solid var(--line); border-radius:16px; }
+  .learning-progress h3 { margin:3px 0; }.learning-progress p,.progress-stat span { color:var(--muted); font-size:13px; }
+  .progress-stat { display:grid; gap:3px; }.progress-stat strong { color:var(--brand); font-size:23px; }
+  .checkup-section { max-width:none; background:#f0f7f5; }
+  .checkup-section > * { max-width:1050px; margin-left:auto; margin-right:auto; }
+  .checkup-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  .checkup-card { padding:25px; border:1px solid var(--line); border-radius:18px; background:#fff; box-shadow:0 8px 24px rgba(25,55,65,.04); }
+  .checkup-icon { display:grid; place-items:center; width:48px; height:48px; margin-bottom:14px; border-radius:14px; background:#e8f6f2; font-size:24px; }
+  .checkup-card h3 { margin-bottom:6px; }.checkup-card>p { margin-bottom:15px; color:var(--muted); }
+  .checkup-card label { display:flex; align-items:flex-start; gap:10px; margin:12px 0; color:#42596b; font-size:14px; font-weight:500; line-height:1.5; }
+  .checkup-card input[type=checkbox] { width:17px; flex:0 0 17px; height:17px; margin:2px 0 0; accent-color:var(--brand); }
+  .setup-steps { padding-left:22px; color:#526879; font-size:14px; line-height:1.55; }.setup-steps li { margin:7px 0; }
+  .checkup-status { margin-top:14px; color:var(--brand); font-weight:700; }
+  .report-steps { max-width:850px; display:grid; gap:12px; margin:0 auto; }
+  .report-steps article { display:flex; gap:16px; padding:18px 20px; border:1px solid var(--line); border-radius:14px; background:white; }
+  .report-steps article>span { display:grid; place-items:center; flex:0 0 34px; height:34px; border-radius:50%; background:var(--accent); color:var(--brand-dark); font-weight:800; }
+  .report-steps p,.report-note { color:var(--muted); line-height:1.6; }.report-note { max-width:850px; margin:18px auto 0; font-size:13px; }
+  body.large-text { font-size:18px; } body.large-text .card p,body.large-text .tip p { font-size:1.05em; }
+  body.high-contrast { --ink:#000; --muted:#243746; --brand:#00544e; --brand-dark:#003d39; --line:#60727a; --canvas:#fff; }
+  body.high-contrast .card,body.high-contrast .tip,body.high-contrast .quiz-box,body.high-contrast .checkup-card { border-width:2px; }
+  @media(max-width:850px) { .learning-progress { grid-template-columns:1fr 1fr; }.learning-progress>div:first-child { grid-column:1/-1; }.checkup-grid { grid-template-columns:1fr; } }
+  @media(max-width:560px) { .access-tools { justify-content:center; flex-wrap:wrap; }.progress-stat strong { font-size:20px; } }
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body.auth-active {
+  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(135deg, #eef3ff, #f5f8ff);
+  color: #172033;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.top-logo {
+  padding: 22px 7%;
+  font-size: 22px;
+  font-weight: 800;
+}
+.top-logo a { text-decoration: none; color: #172033; }
+
+.auth-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: white;
+  border: 1px solid #e2e7f0;
+  border-radius: 18px;
+  padding: 36px;
+  box-shadow: 0 10px 30px rgba(30, 45, 80, .08);
+}
+
+.auth-card h1 {
+  font-size: 26px;
+  margin-bottom: 6px;
+}
+.auth-card .sub {
+  color: #69758a;
+  font-size: 14px;
+  margin-bottom: 26px;
+}
+
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #34405a;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 16px;
+  border: 1px solid #ccd4e2;
+  border-radius: 9px;
+  font: inherit;
+  outline: none;
+}
+input:focus, select:focus { border-color: #3157d5; }
+
+button.primary {
+  width: 100%;
+  border: 0;
+  border-radius: 10px;
+  padding: 13px;
+  background: #3157d5;
+  color: white;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+}
+button.primary:hover { background: #2545b0; }
+
+.switch-link {
+  text-align: center;
+  margin-top: 18px;
+  font-size: 14px;
+  color: #69758a;
+}
+.switch-link a { color: #3157d5; font-weight: 700; text-decoration: none; }
+.switch-link a:hover { text-decoration: underline; }
+
+.msg {
+  display: none;
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+.msg.error   { display: block; background: #ffe9e9; color: #a52222; }
+.msg.success { display: block; background: #e8f8ef; color: #14733e; }
+
+.hint-box {
+  margin-top: 22px;
+  padding: 12px 14px;
+  background: #f7f9fd;
+  border: 1px solid #e2e7f0;
+  border-radius: 10px;
+  font-size: 12.5px;
+  color: #5b667b;
+  line-height: 1.5;
+}
+
+/* ---------- Admin dashboard ---------- */
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 7%;
+  background: #172033;
+  color: white;
+}
+.admin-header .logo { font-weight: 800; font-size: 20px; }
+.admin-header .who { font-size: 13px; color: #b9c2d4; }
+.admin-header button {
+  border: 0;
+  border-radius: 8px;
+  padding: 9px 16px;
+  background: #3157d5;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+.admin-header button:hover { background: #2545b0; }
+
+.admin-main {
+  padding: 45px 7%;
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 35px;
+}
+.stat-card {
+  background: white;
+  border: 1px solid #e2e7f0;
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 8px 24px rgba(30, 45, 80, .05);
+}
+.stat-card .num { font-size: 32px; font-weight: 800; color: #3157d5; }
+.stat-card .label { color: #69758a; font-size: 14px; margin-top: 4px; }
+
+.panel {
+  background: white;
+  border: 1px solid #e2e7f0;
+  border-radius: 16px;
+  padding: 26px;
+  box-shadow: 0 8px 24px rgba(30, 45, 80, .05);
+  margin-bottom: 30px;
+}
+.panel h2 { font-size: 20px; margin-bottom: 16px; }
+
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid #edf0f6; }
+th { color: #69758a; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; }
+.role-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.role-admin { background: #ffe9e9; color: #a52222; }
+.role-user  { background: #e8f8ef; color: #14733e; }
+
+.remove-btn {
+  border: 0;
+  background: none;
+  color: #a52222;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 13px;
+}
+.remove-btn:hover { text-decoration: underline; }
+
+@media (max-width: 700px) {
+  .stat-row { grid-template-columns: 1fr; }
+  table { font-size: 12.5px; }
+}
+
+:root { --ink:#182b3d; --muted:#657789; --brand:#087f78; --brand-dark:#06645f; --line:#dce7e8; --canvas:#f4f8f7; }
+body.auth-active { font-family: Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; background:radial-gradient(ellipse at 85% 15%,#def3ee 0,transparent 34%),linear-gradient(135deg,#f4f8f7,#fff); color:var(--ink); }
+.top-logo { max-width:1180px; width:100%; margin:0 auto; padding:24px 6%; }
+.top-logo a { color:var(--ink); }
+.auth-card { max-width:440px; border:1px solid var(--line); border-radius:20px; padding:38px; box-shadow:0 22px 60px rgba(25,55,65,.10); }
+.auth-card h1 { color:#193448; letter-spacing:-.6px; }
+.auth-card .sub,.switch-link { color:var(--muted); }
+label { color:#42596b; }
+input,select { border-color:#d6e1e4; border-radius:10px; padding:13px 14px; background:#fbfdfd; color:var(--ink); }
+input:focus,select:focus { border-color:var(--brand); box-shadow:0 0 0 3px rgba(8,127,120,.12); }
+button.primary,.admin-header button { background:var(--brand); border-radius:11px; transition:background .18s ease,transform .18s ease; }
+button.primary:hover,.admin-header button:hover { background:var(--brand-dark); transform:translateY(-1px); }
+.switch-link a { color:var(--brand); }
+.hint-box { background:#f2f8f6; border-color:var(--line); border-radius:11px; color:#526879; }
+.admin-header { background:#173044; padding:18px max(5%,calc((100% - 1180px)/2)); }
+.admin-main { max-width:1180px; }
+.stat-card,.panel { border-color:var(--line); border-radius:18px; box-shadow:0 10px 30px rgba(25,55,65,.05); }
+.stat-card .num { color:var(--brand); }
+th { color:var(--muted); }
+th,td { padding:13px 10px; }
+@media(max-width:700px) { .auth-card { padding:28px 23px; } .admin-header { gap:12px; flex-wrap:wrap; } .admin-header .who { overflow-wrap:anywhere; } .panel { overflow-x:auto; } }
+.app-view[hidden]{display:none!important}.account-nav{display:inline-flex;align-items:center;gap:14px}.nav-welcome{color:#657789;font-size:13px}.admin-back{margin-bottom:18px}.admin-back a{color:#087f78;text-decoration:none;font-weight:700}.table-wrap{overflow-x:auto}.admin-main table{min-width:560px}@media(max-width:600px){.account-nav{width:100%;justify-content:center}.admin-header{align-items:flex-start}.auth-card{padding:26px 20px}}
+
+/* ===== Multi-page additions ===== */
+.nav-links{flex-wrap:wrap}
+.nav-links a.active{color:var(--brand);box-shadow:0 2px 0 var(--brand)}
+.nav-links a[hidden]{display:none!important}
+.site-footer{padding:42px 8% 30px}
+.footer-links{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 22px;margin:16px 0 10px}
+.footer-links a{color:#d5deea;text-decoration:none;font-size:14px}
+.footer-links a:hover{color:#fff;text-decoration:underline}
+.home-grid{max-width:1180px;margin:auto}
+.card .btn{margin-top:4px;font-size:14px}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px}
+.btn.secondary{background:#fff;color:var(--brand);border:1px solid var(--brand)}
+.btn.secondary:hover{background:#edf8f5;color:var(--brand-dark)}
+.notfound{text-align:center;min-height:55vh;display:grid;place-content:center;gap:14px}
+.notfound h1{font-size:64px}
+.auth-page .top-logo{padding-bottom:0}
+
+/* ===== Single-file / phone additions ===== */
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%}
+body{background:#f4f8f7}
+.navbar{top:env(safe-area-inset-top,0px)}
+.page[hidden]{display:none!important}
+input,textarea,select{font-size:16px}
+.auth-wrap{display:flex;justify-content:center;padding:40px 18px}
+.auth-wrap .auth-card{margin:0 auto}
+.admin-header{border-radius:0}
+.menu-btn{display:none;background:#fff;color:var(--ink);border:1px solid var(--line);font-size:20px;line-height:1;padding:8px 12px}
+.menu-btn:hover{background:#edf8f5;transform:none}
+@media(max-width:850px){
+  .navbar{flex-direction:row;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding:10px 5%}
+  .menu-btn{display:inline-block}
+  .nav-links{display:none;order:3;width:100%;flex-direction:column;align-items:stretch;gap:0;padding-top:6px}
+  .nav-links.open{display:flex}
+  .nav-links a{padding:13px 4px;border-top:1px solid var(--line);font-size:16px}
+  .nav-links a.active{box-shadow:none;font-weight:800}
+  .account-nav{width:auto;margin-left:auto}
+  .hero{min-height:0;padding:48px 6%}
+  .section{padding:52px 5%}
+  .shield{width:150px;height:150px;font-size:70px}
+  .hero-actions{justify-content:center}
+}
+@media(max-width:560px){.nav-welcome{display:none}.btn,button{padding:14px 18px}.access-tools{justify-content:center}}
+
+
+/* ---------- SmartGuard professional dashboards ---------- */
+:root{--sg-ink:#13243a;--sg-muted:#66768b;--sg-line:#e2eaf2;--sg-panel:#fff;--sg-teal:#0e9488;--sg-navy:#10243c;--sg-soft:#f3f7fb}
+.dashboard-shell{max-width:1220px;margin:0 auto;padding:32px clamp(16px,4vw,44px) 64px;color:var(--sg-ink)}
+.dashboard-top{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;margin-bottom:26px}
+.eyebrow{font-size:11px;letter-spacing:1.7px;font-weight:800;color:var(--sg-teal);text-transform:uppercase}
+.dashboard-top h1{font-size:clamp(28px,4vw,38px);letter-spacing:-1px;line-height:1.15;margin:6px 0 8px}
+.dashboard-sub{color:var(--sg-muted);max-width:700px;font-size:14px}
+.dash-actions{display:flex;gap:10px;flex-wrap:wrap}.btn-secondary{background:#eaf1f7!important;color:#1b3852!important;border:1px solid #dbe5ef!important}
+.sg-stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin:20px 0}
+.sg-stat{background:#fff;border:1px solid var(--sg-line);border-radius:17px;padding:20px;box-shadow:0 8px 26px #142e4a08;min-width:0}
+.sg-stat .stat-top{display:flex;align-items:center;justify-content:space-between;color:var(--sg-muted);font-size:12px;font-weight:700;gap:8px}
+.sg-stat .stat-icon{width:35px;height:35px;border-radius:11px;display:grid;place-items:center;background:#e8f7f5;font-size:17px}
+.sg-stat .big-number{font-size:30px;font-weight:800;letter-spacing:-1px;margin:11px 0 1px;line-height:1.2}.sg-stat small{color:var(--sg-muted);font-size:12px}
+.sg-grid-2{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(280px,1fr);gap:17px;margin:17px 0}
+.sg-panel{background:#fff;border:1px solid var(--sg-line);border-radius:17px;padding:22px;min-width:0;box-shadow:0 8px 26px #142e4a08}
+.sg-panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px}.sg-panel h2{font-size:17px;letter-spacing:-.2px}.sg-panel .panel-desc{font-size:12px;color:var(--sg-muted);margin-top:4px}
+.sg-pill{display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border-radius:999px;font-size:11px;font-weight:800;background:#e8f7f1;color:#167452;white-space:nowrap}.sg-pill.pending{background:#fff3dc;color:#93630c}.sg-pill.review{background:#eaf1ff;color:#3157a4}.sg-pill.resolved{background:#e8f7f1;color:#167452}
+.sg-chart{width:100%;height:220px;display:block}.sg-empty{padding:24px 10px;text-align:center;color:var(--sg-muted);font-size:13px}
+.sg-activity-list{display:grid;gap:0}.sg-activity{display:flex;gap:12px;padding:13px 0;border-bottom:1px solid #edf1f5;align-items:flex-start}.sg-activity:last-child{border-bottom:0}.sg-activity-icon{width:34px;height:34px;flex:0 0 34px;border-radius:10px;display:grid;place-items:center;background:#eff5fa}.sg-activity strong{display:block;font-size:13px}.sg-activity p{font-size:12px;color:var(--sg-muted);margin-top:2px}.sg-activity time{display:block;font-size:10px;color:#8b98a8;margin-top:4px}
+.sg-table-wrap{width:100%;overflow:auto;border:1px solid #e8edf3;border-radius:12px}.sg-table{width:100%;border-collapse:collapse;font-size:13px;min-width:620px}.sg-table th{background:#f6f9fc;color:#64758a;text-align:left;font-size:11px;letter-spacing:.4px;text-transform:uppercase;padding:12px}.sg-table td{padding:13px 12px;border-top:1px solid #edf1f5;vertical-align:middle}.sg-table .muted{color:var(--sg-muted);font-size:11px}.sg-table select,.sg-table input{margin:0;width:auto;min-width:125px;padding:8px;font-size:12px}.sg-table .small-btn{padding:8px 10px;font-size:11px;border-radius:8px}
+.sg-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}.sg-field-full{grid-column:1/-1}.sg-form-note{background:#f0f7fb;border:1px solid #deebf3;border-radius:12px;padding:13px 15px;font-size:12px;color:#516a7e;line-height:1.5;margin:12px 0 18px}.sg-safety-meter{height:8px;background:#e8eef4;border-radius:20px;overflow:hidden;margin:12px 0}.sg-safety-meter span{display:block;height:100%;width:0;background:var(--sg-teal);border-radius:20px;transition:width .2s}
+.sg-chart-legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11px;color:var(--sg-muted)}.sg-chart-legend span{display:inline-flex;align-items:center;gap:6px}.sg-dot{width:8px;height:8px;display:inline-block;border-radius:50%;background:#0e9488}
+.admin-header{position:relative}.admin-main{padding:26px clamp(16px,4vw,44px) 60px}.admin-main .panel{border-radius:16px;margin:18px 0;box-shadow:0 8px 26px #142e4a08;border:1px solid var(--sg-line)}.admin-header .logo{letter-spacing:-.4px}.admin-header button{border:1px solid #476079}
+#page-admin .admin-back{margin-bottom:20px}#page-admin .stat-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px}#page-admin .stat-card{border:1px solid var(--sg-line);border-radius:16px;padding:19px;background:#fff;box-shadow:0 8px 26px #142e4a08}#page-admin .stat-card .num{font-size:30px;letter-spacing:-1px}#page-admin .stat-card .label{font-size:12px;color:var(--sg-muted)}
+#page-admin .admin-analytics{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(280px,1fr);gap:17px;margin:18px 0}#page-admin .admin-analytics .panel{margin:0;min-width:0}#page-admin .admin-main h2{font-size:17px;margin-bottom:6px}#page-admin .admin-main .panel>p{color:var(--sg-muted);font-size:12px;margin-bottom:16px}
+#page-admin .admin-controls{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 16px}#page-admin .admin-controls input,#page-admin .admin-controls select{width:auto;min-width:180px;margin:0}#page-admin .risk-note{font-size:12px;color:var(--sg-muted);padding:12px 14px;border-radius:10px;background:#f5f8fb;margin-top:14px}
+@media(max-width:850px){.sg-stat-grid,#page-admin .stat-row{grid-template-columns:repeat(2,minmax(0,1fr))}.sg-grid-2,#page-admin .admin-analytics{grid-template-columns:1fr}.dashboard-shell{padding-top:24px}}
+@media(max-width:520px){.sg-stat-grid,#page-admin .stat-row{grid-template-columns:1fr 1fr;gap:9px}.sg-stat{padding:14px}.sg-stat .big-number{font-size:25px}.sg-panel{padding:16px}.dashboard-top h1{font-size:29px}.sg-form-grid{grid-template-columns:1fr}.sg-field-full{grid-column:auto}.dashboard-top .dash-actions{width:100%}.dashboard-top .dash-actions a,.dashboard-top .dash-actions button{flex:1;text-align:center}.admin-header{padding:15px 18px}#page-admin .admin-main{padding:20px 14px 40px}#page-admin .stat-card{padding:14px}}
+
+</style>
+</head>
+<body>
+<a class="skip-link" href="#mainContent">Skip to content</a>
+<header><nav class="navbar" aria-label="Main">
+<a class="logo" href="#/" style="text-decoration:none">🛡️ SmartGuard</a>
+<span id="accountNav" class="account-nav"></span>
+<button type="button" class="menu-btn" id="menuBtn" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">☰</button>
+<div class="nav-links" id="navLinks"><a href="#/">Home</a><a href="#/learn">Learn</a><a href="#/tools">Safety Tools</a><a href="#/quiz">Quiz</a><a href="#/tips">Safety Tips</a><a href="#/checkup">Checkup</a><a href="#/report">Report a scam</a><a href="#/admin-login">Admin Login</a><a href="#/login" class="guest-link">Log In</a><a href="#/signup" class="guest-link">Sign Up</a></div>
+</nav></header>
+<div class="access-tools" aria-label="Display settings"><span>Display</span><button type="button" id="textSmaller" aria-label="Decrease text size">A−</button><button type="button" id="textLarger" aria-label="Increase text size">A+</button><button type="button" id="contrastToggle" aria-pressed="false">High contrast</button></div>
+<main id="mainContent" tabindex="-1">
+<div class="page" id="page-home" hidden>
+<section id="home" class="hero">
+  <div>
+    <p class="tag">SMART • SAFE • SECURE</p>
+    <h1>Stay Smart.<br><span>Stay Safe Online.</span></h1>
+    <p class="hero-text">SmartGuard helps you learn about online threats and check common internet-safety risks through simple interactive tools.</p>
+    <div class="hero-actions"><a class="btn" href="#/tools">Explore Safety Tools</a><a class="btn secondary" href="#/learn">Learn the signs</a></div>
+  </div>
+  <div class="shield">🛡️</div>
+</section>
+<section class="checklist" aria-labelledby="checklistTitle">
+      <div class="checklist-card">
+        <div>
+          <h2 class="checklist-title" id="checklistTitle">Your quick safety check</h2>
+          <p class="checklist-copy"><span id="checklistCount">0 of 3 complete</span> · Progress is saved on this device.</p>
+          <div class="checklist-meter" role="progressbar" aria-label="Safety checklist progress" aria-valuemin="0" aria-valuemax="3" aria-valuenow="0"><span id="checklistFill"></span></div>
+        </div>
+        <div class="checklist-items">
+          <label class="checklist-item"><input type="checkbox" data-check="unique-passwords"> I use unique passwords for important accounts</label>
+          <label class="checklist-item"><input type="checkbox" data-check="two-step"> I turn on two-step verification when available</label>
+          <label class="checklist-item"><input type="checkbox" data-check="verify-links"> I verify unexpected links before opening them</label>
+        </div>
+      </div>
+    </section>
+<section class="section"><div class="section-heading"><p class="tag">EXPLORE SMARTGUARD</p><h2>Everything you need in one place</h2></div><div class="cards home-grid"><div class="card"><div class="icon">📚</div><h3>Learn</h3><p>See fictional phishing examples and the signals that give scams away.</p><a class="btn" href="#/learn">Open Learn</a></div><div class="card"><div class="icon">🧰</div><h3>Safety Tools</h3><p>Check a URL, test a password and analyze a suspicious message.</p><a class="btn" href="#/tools">Open Safety Tools</a></div><div class="card"><div class="icon">🧠</div><h3>Safety Quiz</h3><p>Test what you know with a 10-question cyber safety quiz.</p><a class="btn" href="#/quiz">Open Safety Quiz</a></div><div class="card"><div class="icon">💡</div><h3>Safety Tips</h3><p>Four essential habits for staying protected online.</p><a class="btn" href="#/tips">Open Safety Tips</a></div><div class="card"><div class="icon">✅</div><h3>Privacy Checkup</h3><p>Review your privacy settings and set up two-step verification.</p><a class="btn" href="#/checkup">Open Privacy Checkup</a></div><div class="card"><div class="icon">🚩</div><h3>Report a Scam</h3><p>Know exactly what to do if something looks wrong.</p><a class="btn" href="#/report">Open Report a Scam</a></div></div></section>
+</div>
+<div class="page" id="page-learn" hidden>
+<section id="learn" class="section">
+      <div class="section-heading"><p class="tag">SPOT THE SIGNALS</p><h2>Phishing examples</h2><p class="section-intro">Scammers use urgency and familiar brands to prompt quick action. These examples are fictional.</p></div>
+      <div class="cards learning-cards">
+        <article class="card"><div class="example-label">Example 01 · Delivery alert</div><blockquote>“Your parcel is on hold. Pay a small redelivery fee now: example.invalid”</blockquote><h3>What to notice</h3><p>Unexpected fee, pressure to act, and a link that may not belong to the delivery company. Check tracking through the company’s official app or site.</p></article>
+        <article class="card"><div class="example-label">Example 02 · Account warning</div><blockquote>“Your account will be closed today. Verify your password and one-time code here.”</blockquote><h3>What to notice</h3><p>Threats and requests for credentials or one-time codes are serious warning signs. Open the service directly and check its alerts.</p></article>
+        <article class="card"><div class="example-label">Example 03 · Prize message</div><blockquote>“You have won a gift card. Pay a processing charge to claim your prize.”</blockquote><h3>What to notice</h3><p>Unexpected prizes paired with fees or personal-data requests deserve skepticism. Don’t reply or share payment details.</p></article>
+      </div>
+    </section>
+</div>
+<div class="page" id="page-tools" hidden>
+<section id="tools" class="section">
+      <div class="section-heading">
+        <p class="tag">INTERACTIVE TOOLS</p>
+        <h2>Check Your Online Safety</h2>
+      </div>
+
+      <div class="cards">
+        <div class="card">
+          <div class="icon">🔗</div>
+          <h3>URL Safety Checker</h3>
+          <p>Check a URL for basic warning signs such as missing HTTPS, suspicious words, and unusual formatting.</p>
+          <input id="urlInput" type="text" placeholder="https://example.com">
+          <button onclick="checkURL()">Check URL</button>
+          <div id="urlResult" class="result"></div>
+        </div>
+
+        <div class="card">
+          <div class="icon">🔑</div>
+          <h3>Password Strength</h3>
+          <p>Test password strength locally. Your password is not stored by this demo.</p>
+          <input id="passwordInput" type="password" placeholder="Enter a password" oninput="checkPassword()">
+          <div class="strength-bar"><div id="strengthFill"></div></div>
+          <div id="passwordResult" class="result"></div>
+        </div>
+
+        <div class="card">
+          <div class="icon">🚨</div>
+          <h3>Scam Message Analyzer</h3>
+          <p>Paste a message to identify common scam warning signs.</p>
+          <textarea id="messageInput" rows="4" placeholder="Paste a suspicious message here..."></textarea>
+          <button onclick="analyzeMessage()">Analyze Message</button>
+          <div id="messageResult" class="result"></div>
+        </div>
+      </div>
+    </section>
+</div>
+<div class="page" id="page-quiz" hidden>
+<section id="quiz" class="section quiz-section">
+      <div class="section-heading">
+        <p class="tag">TEST YOUR KNOWLEDGE</p>
+        <h2>Cyber Safety Quiz</h2>
+      </div>
+
+      <div class="learning-progress" aria-live="polite">
+        <div><span class="progress-label">YOUR LEARNING</span><h3>Quiz progress</h3><p>Your results stay in this browser.</p></div>
+        <div class="progress-stat"><strong id="lastScore">—</strong><span>Latest score</span></div>
+        <div class="progress-stat"><strong id="bestScore">—</strong><span>Best score</span></div>
+        <div class="progress-stat"><strong id="quizCount">0</strong><span>Quizzes completed</span></div>
+      </div>      <div class="quiz-box">
+        <p id="questionNumber"></p>
+        <h3 id="question"></h3>
+        <div id="options"></div>
+        <button id="nextBtn" disabled>Next Question</button>
+        <div id="quizResult" aria-live="polite"></div>
+      </div>
+    </section>
+</div>
+<div class="page" id="page-tips" hidden>
+<section id="tips" class="section">
+      <div class="section-heading">
+        <p class="tag">STAY PROTECTED</p>
+        <h2>Essential Safety Tips</h2>
+      </div>
+      <div class="tips-grid">
+        <div class="tip"><span>🎣</span><div><h3>Watch for Phishing</h3><p>Be cautious with unexpected links, attachments, and requests for sensitive information.</p></div></div>
+        <div class="tip"><span>🔐</span><div><h3>Protect Your Accounts</h3><p>Use strong, unique passwords and enable multi-factor authentication where available.</p></div></div>
+        <div class="tip"><span>📱</span><div><h3>Think Before Sharing</h3><p>Avoid publicly posting personal information that could be misused.</p></div></div>
+        <div class="tip"><span>🛒</span><div><h3>Shop Carefully</h3><p>Check the website and seller before entering payment or personal information.</p></div></div>
+      </div>
+    </section>
+</div>
+<div class="page" id="page-checkup" hidden>
+<section id="checkup" class="section checkup-section">
+      <div class="section-heading"><p class="tag">MAKE YOUR ACCOUNTS SAFER</p><h2>Privacy & account checkup</h2><p class="section-intro">Use these prompts as a personal review. Your selections are saved only in this browser.</p></div>
+      <div class="checkup-grid">
+        <article class="checkup-card"><div class="checkup-icon">🔒</div><h3>Privacy checkup</h3><p>Review these settings in the apps and accounts you use most.</p><label><input type="checkbox" data-checkup="profile"> My profiles show only information I mean to share</label><label><input type="checkbox" data-checkup="location"> I review location access and sharing</label><label><input type="checkbox" data-checkup="permissions"> I remove app permissions I no longer need</label><label><input type="checkbox" data-checkup="recovery"> My recovery email and phone are up to date</label></article>
+        <article class="checkup-card"><div class="checkup-icon">🛡️</div><h3>Two-step verification</h3><p>Add a second sign-in check to make account access harder for someone else.</p><ol class="setup-steps"><li>Open the account’s settings using its official app or website.</li><li>Find Security or Sign-in settings, then choose two-step or multi-factor verification.</li><li>Choose an available method and save backup codes somewhere private.</li><li>Never share a sign-in code with someone who contacts you.</li></ol><label><input type="checkbox" data-checkup="2fa-email"> I enabled an extra sign-in step on my main email</label><label><input type="checkbox" data-checkup="2fa-important"> I checked my most important accounts</label></article>
+      </div>
+      <p class="checkup-status" id="checkupStatus" aria-live="polite"></p>
+    </section>
+</div>
+<div class="page" id="page-report" hidden>
+<section id="report" class="section report-section">
+      <div class="section-heading"><p class="tag">IF SOMETHING LOOKS WRONG</p><h2>How to report a scam</h2><p class="section-intro">Act quickly, keep evidence, and use verified contact routes.</p></div>
+      <div class="report-steps">
+        <article><span>1</span><div><h3>Stop contact</h3><p>Don’t reply, click more links, or send money or codes. Block the sender when appropriate.</p></div></article>
+        <article><span>2</span><div><h3>Save evidence</h3><p>Keep screenshots, sender details, transaction references, and dates. Avoid forwarding suspicious links to others.</p></div></article>
+        <article><span>3</span><div><h3>Report through official channels</h3><p>Report the message or account in the service where it arrived. For suspected crime, use your local government cybercrime reporting service.</p></div></article>
+        <article><span>4</span><div><h3>Protect affected accounts</h3><p>If you shared a password, change it from the official site and anywhere else you reused it. If money or card details are involved, contact your bank using the number on its official app, card, or website.</p></div></article>
+      </div>
+      <p class="report-note">If you are in immediate danger or have lost money, contact your local authorities or financial provider promptly. SmartGuard is an educational guide, not an emergency service.</p>
+      <div class="sg-panel" style="max-width:850px;margin:30px auto 0">
+        <div class="sg-panel-head"><div><p class="eyebrow">SECURE REPORT WORKFLOW · DEMO</p><h2>Submit a suspicious activity report</h2><p class="panel-desc">Create a report for the SmartGuard administrator to review on this browser.</p></div><span class="sg-pill pending">Local demo</span></div>
+        <div id="reportAuthNotice" class="sg-form-note">Log in to associate a report with your account. Reports are saved in this browser only; they are not sent to authorities.</div>
+        <form id="scamReportForm"><div class="sg-form-grid">
+          <div><label for="reportType">Report type</label><select id="reportType" required><option value="Phishing message">Phishing message</option><option value="Suspicious website">Suspicious website</option><option value="Impersonation">Impersonation</option><option value="Payment scam">Payment scam</option><option value="Other">Other</option></select></div>
+          <div><label for="reportChannel">Where did it happen?</label><select id="reportChannel" required><option>Email</option><option>SMS / text message</option><option>Social media</option><option>Website</option><option>Phone call</option><option>Messaging app</option><option>Other</option></select></div>
+          <div class="sg-field-full"><label for="reportTitle">Short title</label><input id="reportTitle" maxlength="100" placeholder="e.g. Fake parcel delivery message" required></div>
+          <div class="sg-field-full"><label for="reportDetails">What happened?</label><textarea id="reportDetails" rows="4" maxlength="1500" placeholder="Describe the warning signs. Do not include passwords, one-time codes, bank details, or other secrets." required></textarea></div>
+          <div class="sg-field-full"><label for="reportEvidence">Suspicious URL or sender (optional)</label><input id="reportEvidence" maxlength="300" placeholder="Optional — avoid opening suspicious links"></div>
+        </div><div class="sg-form-note">Privacy tip: do not include account passwords, one-time codes, full card numbers, or private identity documents. This browser-only demo does not securely transmit or encrypt reports.</div><button type="submit" class="primary">Submit report</button><p id="reportFormMsg" class="msg" aria-live="polite"></p></form>
+      </div>
+    </section>
+</div>
+<div class="page" id="page-dashboard" hidden>
+  <main class="dashboard-shell">
+    <div class="dashboard-top"><div><p class="eyebrow">PERSONAL SECURITY SPACE</p><h1 id="userDashGreeting">Your security dashboard</h1><p class="dashboard-sub">A clear view of your learning progress, recent activity, and reports. Your data in this demo stays on this browser.</p></div><div class="dash-actions"><a class="btn" href="#/tools">Open safety tools</a><a class="btn btn-secondary" href="#/report">Report a concern</a></div></div>
+    <div class="sg-stat-grid">
+      <article class="sg-stat"><div class="stat-top"><span>Quiz attempts</span><span class="stat-icon">🧠</span></div><div class="big-number" id="userQuizCount">0</div><small>Completed in this browser</small></article>
+      <article class="sg-stat"><div class="stat-top"><span>Best quiz score</span><span class="stat-icon">🏆</span></div><div class="big-number" id="userBestScore">—</div><small>Out of 10 questions</small></article>
+      <article class="sg-stat"><div class="stat-top"><span>Reports submitted</span><span class="stat-icon">🚩</span></div><div class="big-number" id="userReportCount">0</div><small>Linked to your current account</small></article>
+      <article class="sg-stat"><div class="stat-top"><span>Learning actions</span><span class="stat-icon">📘</span></div><div class="big-number" id="userActivityCount">0</div><small>Recorded locally</small></article>
+    </div>
+    <div class="sg-grid-2"><section class="sg-panel"><div class="sg-panel-head"><div><h2>Your learning progress</h2><p class="panel-desc">Quiz score history recorded in this browser</p></div><a href="#/quiz">Take quiz →</a></div><canvas id="userScoreChart" class="sg-chart" height="220" aria-label="Quiz score history chart"></canvas><div id="userScoreChartEmpty" class="sg-empty" hidden>No quiz results yet. Complete the safety quiz to start your chart.</div></section>
+    <section class="sg-panel"><div class="sg-panel-head"><div><h2>Recent activity</h2><p class="panel-desc">A short timeline of your SmartGuard use</p></div><span class="sg-pill">On this device</span></div><div id="userActivityList" class="sg-activity-list"></div></section></div>
+    <section class="sg-panel"><div class="sg-panel-head"><div><h2>My scam reports</h2><p class="panel-desc">Track locally stored reports and administrator review status</p></div><a href="#/report">New report +</a></div><div class="sg-table-wrap"><table class="sg-table"><thead><tr><th>Report</th><th>Type</th><th>Submitted</th><th>Status</th></tr></thead><tbody id="userReportRows"></tbody></table></div><div id="userReportsEmpty" class="sg-empty" hidden>You have not submitted any reports yet.</div></section>
+    <div class="sg-form-note">Demo limitation: the dashboard reads browser-local data. It is not a server account portal, and clearing site data or using another browser can remove or separate this history.</div>
+  </main>
+</div>
+<div class="page" id="page-login" hidden>
+    <div class="auth-wrap"><div class="auth-card">
+    <h1>Welcome back</h1><p class="sub">Log in to access your SmartGuard account.</p>
+    <div id="loginMsg" class="msg" aria-live="polite"></div>
+    <form id="loginForm"><label for="loginEmail">Email</label><input id="loginEmail" type="email" placeholder="you@example.com" required autocomplete="username"><label for="loginPassword">Password</label><input id="loginPassword" type="password" placeholder="Enter your password" required autocomplete="current-password"><button class="primary" type="submit">Log In</button></form>
+    <p class="switch-link">Don’t have an account? <a href="#/signup">Create one</a></p>
+  </div></div>
+</div>
+<div class="page" id="page-admin-login" hidden>
+  <div class="auth-wrap"><div class="auth-card">
+    <h1>Admin Login</h1><p class="sub">Sign in to the SmartGuard administration dashboard.</p>
+    <div id="adminLoginMsg" class="msg" aria-live="polite"></div>
+    <form id="adminLoginForm"><label for="adminUsername">Admin username</label><input id="adminUsername" type="text" placeholder="Enter admin username" required autocomplete="username"><label for="adminPassword">Password</label><input id="adminPassword" type="password" placeholder="Enter admin password" required autocomplete="current-password"><button class="primary" type="submit">Admin Login</button></form>
+    <div class="hint-box">Educational demo only. This front-end login is not secure: the credential check is visible in page source. Do not use it to protect real data.</div><p class="switch-link"><a href="#/login">User login</a> · <a href="#/">Back to home</a></p>
+  </div></div>
+</div>
+<div class="page" id="page-signup" hidden>
+    <div class="auth-wrap"><div class="auth-card">
+    <h1>Create your account</h1><p class="sub">Sign up to start using SmartGuard’s safety tools.</p>
+    <div id="signupMsg" class="msg" aria-live="polite"></div>
+    <form id="signupForm"><label for="signupName">Full name</label><input id="signupName" type="text" placeholder="Jane Doe" required autocomplete="name"><label for="signupEmail">Email</label><input id="signupEmail" type="email" placeholder="you@example.com" required autocomplete="email"><label for="signupPassword">Password</label><input id="signupPassword" type="password" placeholder="At least 8 characters" required minlength="8" autocomplete="new-password"><label for="signupConfirm">Confirm password</label><input id="signupConfirm" type="password" placeholder="Re-enter your password" required minlength="8" autocomplete="new-password"><button class="primary" type="submit">Create Account</button></form>
+    <p class="switch-link">Already have an account? <a href="#/login">Log in</a></p><div class="hint-box">Create a standard user account here. Administrators must use the separate Admin Login page. This educational demo stores account data in this browser session only.</div>
+  </div></div>
+</div>
+<div class="page" id="page-admin" hidden>
+  <header class="admin-header"><div class="logo">🛡️ SmartGuard <span style="font-weight:500;color:#b9c7d5">/ Admin Console</span></div><div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap"><span class="who" id="whoLabel"></span><button type="button" id="adminLogout">Log Out</button></div></header>
+  <main class="admin-main"><div class="admin-back"><a href="#/">← Back to SmartGuard</a></div>
+    <div class="dashboard-top"><div><p class="eyebrow">OPERATIONS OVERVIEW</p><h1>Security awareness overview</h1><p class="dashboard-sub">Monitor registered demo accounts, report workflow, learning engagement, and recorded actions.</p></div><div class="dash-actions"><button type="button" id="exportReportsBtn" class="btn-secondary">Export reports CSV</button><button type="button" id="exportActivityBtn" class="btn-secondary">Export activity CSV</button></div></div>
+    <div class="stat-row"><div class="stat-card"><div class="num" id="totalUsers">0</div><div class="label">Registered accounts</div></div><div class="stat-card"><div class="num" id="totalStandard">0</div><div class="label">Standard users</div></div><div class="stat-card"><div class="num" id="adminReportCount">0</div><div class="label">Total reports</div></div><div class="stat-card"><div class="num" id="adminPendingCount">0</div><div class="label">Awaiting review</div></div></div>
+    <div class="admin-analytics"><section class="panel"><h2>Activity trend</h2><p>Number of recorded local events by day</p><canvas id="adminActivityChart" class="sg-chart" height="220" aria-label="Activity trend chart"></canvas><div id="adminActivityEmpty" class="sg-empty" hidden>No activity recorded yet. Actions taken on this device will appear here.</div></section><section class="panel"><h2>Report status breakdown</h2><p>Current workflow status of stored reports</p><canvas id="adminReportChart" class="sg-chart" height="220" aria-label="Report status chart"></canvas><div id="adminReportEmpty" class="sg-empty" hidden>No scam reports submitted yet.</div></section></div>
+    <section class="panel"><h2>Report management</h2><p>Review submitted reports and update their workflow status. Changes are local to this browser.</p><div class="admin-controls"><input id="reportSearch" type="search" placeholder="Search title, reporter, type…" aria-label="Search reports"><select id="reportStatusFilter" aria-label="Filter report status"><option value="all">All statuses</option><option value="Submitted">Submitted</option><option value="Under Review">Under Review</option><option value="Resolved">Resolved</option></select><select id="reportTypeFilter" aria-label="Filter report type"><option value="all">All report types</option><option>Phishing message</option><option>Suspicious website</option><option>Impersonation</option><option>Payment scam</option><option>Other</option></select></div><div class="table-wrap"><table class="sg-table"><thead><tr><th>Report</th><th>Reporter</th><th>Type / channel</th><th>Submitted</th><th>Status</th><th>Action</th></tr></thead><tbody id="adminReportRows"></tbody></table></div><div id="adminReportsEmpty" class="sg-empty" hidden>No reports match this filter.</div></section>
+    <section class="panel"><h2>Registered accounts</h2><p>Accounts created through this browser’s signup form. This list is not a global user database.</p><div class="admin-controls"><input id="userSearch" type="search" placeholder="Search name or email…" aria-label="Search users"></div><div class="table-wrap"><table class="sg-table"><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Joined</th><th>Action</th></tr></thead><tbody id="userTableBody"></tbody></table></div><div id="usersEmpty" class="sg-empty" hidden>No accounts match this search.</div></section>
+    <section class="panel"><h2>Recent activity log</h2><p>Useful for a project demonstration; events are stored in this browser, not collected centrally.</p><div class="table-wrap"><table class="sg-table"><thead><tr><th>When</th><th>User</th><th>Activity</th><th>Details</th></tr></thead><tbody id="adminActivityRows"></tbody></table></div><div id="adminActivityRowsEmpty" class="sg-empty" hidden>No recorded activity yet.</div><div class="risk-note">Security boundary: this is a front-end demo. Admin credentials and role checks are visible in page source and can be bypassed. Do not deploy it with real users or sensitive reports until a backend enforces authentication, authorization, validation, and secure storage.</div></section>
+  </main>
+</div>
+<div class="page" id="page-notfound" hidden>
+<section class="section notfound"><h1>404</h1><h2>Page not found</h2><p>That page doesn’t exist or has moved.</p><div><a class="btn" href="#/">Back to home</a></div></section>
+</div>
+</main>
+<footer class="site-footer"><p>🛡️ SmartGuard — Internet Safety Awareness System</p><nav class="footer-links" aria-label="Footer"><a href="#/learn">Learn</a><a href="#/tools">Safety Tools</a><a href="#/quiz">Quiz</a><a href="#/tips">Safety Tips</a><a href="#/checkup">Checkup</a><a href="#/report">Report a scam</a></nav><p class="small">Educational project demo. Automated checks are basic indicators, not a guarantee that a website or message is safe.</p></footer>
+<script>
+const _sgMem = {};
+const sgSession = {
+  getItem(k) { try { return sessionStorage.getItem(k); } catch (e) { return k in _sgMem ? _sgMem[k] : null; } },
+  setItem(k, v) { try { sessionStorage.setItem(k, v); } catch (e) { _sgMem[k] = String(v); } },
+  removeItem(k) { try { sessionStorage.removeItem(k); } catch (e) { delete _sgMem[k]; } }
+};
+
+/* =========================================================
+   SmartGuard - Demo Auth Store
+   NOTE: This is a client-side educational demo only.
+   Accounts live in memory (via sessionStorage) and reset
+   when the browser tab is closed. There is no real backend,
+   so this must never be used for real credentials.
+========================================================= */
+
+const SG_USERS_KEY = "sg_demo_users";
+const SG_SESSION_KEY = "sg_demo_session";
+
+function sgGetUsers() {
+  const raw = sgSession.getItem(SG_USERS_KEY);
+  if (raw) {
+    // Remove demo accounts from data saved by earlier versions.
+    const demoEmails = ["user@smartguard.local", "admin@smartguard.local"];
+    const users = JSON.parse(raw).filter(user => !demoEmails.includes(String(user.email).toLowerCase()));
+    sgSession.setItem(SG_USERS_KEY, JSON.stringify(users));
+    return users;
+  }
+
+  // Start with no pre-created demo accounts. Users can create accounts via Sign Up.
+  const seeded = [];
+  sgSession.setItem(SG_USERS_KEY, JSON.stringify(seeded));
+  return seeded;
+}
+
+function sgSaveUsers(users) {
+  sgSession.setItem(SG_USERS_KEY, JSON.stringify(users));
+}
+
+function sgFindUser(email) {
+  return sgGetUsers().find(u => u.email.toLowerCase() === email.toLowerCase());
+}
+
+function sgCreateUser(name, email, password, role = "user") {
+  const users = sgGetUsers();
+  if (sgFindUser(email)) return { ok: false, message: "An account with this email already exists." };
+
+  users.push({ name, email, password, role, createdAt: new Date().toISOString() });
+  sgSaveUsers(users);
+  return { ok: true };
+}
+
+function sgLogin(email, password) {
+  const user = sgFindUser(email);
+  if (!user || user.password !== password) {
+    return { ok: false, message: "Invalid email or password." };
+  }
+  sgSession.setItem(SG_SESSION_KEY, JSON.stringify({ name: user.name, email: user.email, role: user.role }));
+  return { ok: true, role: user.role, name:user.name, email:user.email };
+}
+
+function sgLogout() {
+  sgSession.removeItem(SG_SESSION_KEY);
+}
+
+function sgCurrentSession() {
+  const raw = sgSession.getItem(SG_SESSION_KEY);
+  return raw ? JSON.parse(raw) : null;
+}
+
+// Migrate old accounts and sign out any session belonging to a removed demo account.
+sgGetUsers();
+const existingSession = sgCurrentSession();
+if (existingSession && ["user@smartguard.local", "admin@smartguard.local"].includes(String(existingSession.email).toLowerCase())) sgLogout();
+
+
+  
+function refreshAccountNav() {
+  const session = sgCurrentSession();
+  document.querySelectorAll(".guest-link").forEach(l => { l.hidden = Boolean(session); });
+  const nav = document.getElementById("accountNav");
+  if (!nav) return;
+  nav.replaceChildren();
+  if (!session) return;
+  const hi = document.createElement("span"); hi.className = "nav-welcome"; hi.textContent = "Hi, " + session.name; nav.appendChild(hi);
+  if (session.role === "admin") { const a = document.createElement("a"); a.href = "#/admin"; a.textContent = "Admin"; nav.appendChild(a); }
+  else { const a = document.createElement("a"); a.href = "#/dashboard"; a.textContent = "Dashboard"; nav.appendChild(a); }
+  const out = document.createElement("a"); out.href = "#/"; out.textContent = "Log Out";
+  out.addEventListener("click", () => { sgLogActivity("logout"); sgLogout(); refreshAccountNav(); });
+  nav.appendChild(out);
+}
+
+(function setupAccessibility() {
+    if (!document.getElementById("textSmaller")) return;
+    const body = document.body;
+    const smaller = document.getElementById("textSmaller");
+    const larger = document.getElementById("textLarger");
+    const contrast = document.getElementById("contrastToggle");
+    let settings = {};
+    try { settings = JSON.parse(localStorage.getItem("smartguard-display-v1") || "{}"); } catch (error) { settings = {}; }
+    body.classList.toggle("large-text", Boolean(settings.large));
+    body.classList.toggle("high-contrast", Boolean(settings.contrast));
+    contrast.setAttribute("aria-pressed", String(Boolean(settings.contrast)));
+    function save() {
+      settings = { large: body.classList.contains("large-text"), contrast: body.classList.contains("high-contrast") };
+      contrast.setAttribute("aria-pressed", String(settings.contrast));
+      try { localStorage.setItem("smartguard-display-v1", JSON.stringify(settings)); } catch (error) { /* Display settings still work for this visit. */ }
+    }
+    smaller.addEventListener("click", () => { body.classList.remove("large-text"); save(); });
+    larger.addEventListener("click", () => { body.classList.add("large-text"); save(); });
+    contrast.addEventListener("click", () => { body.classList.toggle("high-contrast"); save(); });
+  })();
+  
+refreshAccountNav();
+
+function checkURL() {
+    const input = document.getElementById("urlInput");
+    const result = document.getElementById("urlResult");
+    const value = input.value.trim();
+
+    if (!value) {
+      showResult(result, "Please enter a URL to check.", "warning");
+      return;
+    }
+
+    let score = 0;
+
+    if (/^http:\/\//i.test(value)) score += 2;
+    if (/@/.test(value)) score += 2;
+    if (/(login|verify|urgent|free|gift|claim|password)/i.test(value)) score += 1;
+    if (value.length > 90) score += 1;
+    if (/^(https?:\/\/)?\d{1,3}(\.\d{1,3}){3}/i.test(value)) score += 2;
+    if (/xn--/i.test(value)) score += 1;
+
+    if (score >= 4) {
+      showResult(result, "⚠️ High-risk indicators found. Do not enter sensitive information unless you independently verify the website.", "danger");
+    } else if (score >= 2) {
+      showResult(result, "⚠️ Some warning signs were detected. Verify the domain before continuing.", "warning");
+    } else {
+      showResult(result, "✅ No obvious warning signs were detected by this basic checker. This does not guarantee the URL is safe.", "safe");
+    }
+  }
+
+  /* ========================================================
+     Password Strength Checker
+  ======================================================== */
+  function checkPassword() {
+    const value = document.getElementById("passwordInput").value;
+    const fill = document.getElementById("strengthFill");
+    const result = document.getElementById("passwordResult");
+
+    let score = 0;
+    if (value.length >= 8) score++;
+    if (value.length >= 12) score++;
+    if (/[a-z]/.test(value) && /[A-Z]/.test(value)) score++;
+    if (/\d/.test(value)) score++;
+    if (/[^A-Za-z0-9]/.test(value)) score++;
+
+    if (value && score === 0) score = 1;
+
+    const levels = [
+      ["", ""],
+      ["Very weak", "danger"],
+      ["Weak", "danger"],
+      ["Moderate", "warning"],
+      ["Strong", "safe"],
+      ["Very strong", "safe"]
+    ];
+
+    fill.style.width = (score * 20) + "%";
+    result.className = "result " + (levels[score][1] || "");
+    result.textContent = value ? "Password strength: " + levels[score][0] : "";
+    result.style.display = value ? "block" : "none";
+  }
+
+  /* ========================================================
+     Scam Message Analyzer
+  ======================================================== */
+  function analyzeMessage() {
+    const text = document.getElementById("messageInput").value.trim();
+    const result = document.getElementById("messageResult");
+
+    if (!text) {
+      showResult(result, "Please paste a message first.", "warning");
+      return;
+    }
+
+    const patterns = [
+      /urgent|immediately|act now|last chance/i,
+      /otp|one[- ]time password|verification code/i,
+      /bank|account|upi|payment|refund/i,
+      /click here|click the link|verify now/i,
+      /winner|prize|lottery|free gift/i,
+      /password|pin|cvv/i
+    ];
+
+    const matches = patterns.filter(p => p.test(text)).length;
+
+    if (matches >= 3) {
+      showResult(result, "🚨 Several common scam indicators were detected. Do not click links or share OTPs, passwords, PINs, or payment details.", "danger");
+    } else if (matches >= 1) {
+      showResult(result, "⚠️ This message contains a possible warning sign. Verify the sender through an official channel before taking action.", "warning");
+    } else {
+      showResult(result, "✅ No common scam indicators were detected by this simple analyzer. Still verify unexpected messages.", "safe");
+    }
+  }
+
+  function showResult(element, message, type) {
+    element.textContent = message;
+    element.className = "result " + type;
+    element.style.display = "block";
+  }
+
+  /* ========================================================
+     Cyber Safety Quiz
+  ======================================================== */
+  
+const questions = [
+    {
+      q: "You receive an unexpected message asking for your OTP. What should you do?",
+      options: ["Share the OTP quickly", "Ignore the request and never share the OTP", "Forward the OTP to a friend", "Post the OTP online"],
+      answer: 1
+    },
+    {
+      q: "Which is a good sign that a website connection is encrypted?",
+      options: ["It uses HTTPS", "It has many pop-ups", "It asks for your password immediately", "It has a very long URL"],
+      answer: 0
+    },
+    {
+      q: "What is phishing?",
+      options: ["A method of protecting files", "A fake attempt to obtain sensitive information", "A type of computer hardware", "A safe online shopping method"],
+      answer: 1
+    },
+    {
+      q: "What is a good password practice?",
+      options: ["Use the same password everywhere", "Use your birth date", "Use a strong, unique password for important accounts", "Share your password with friends"],
+      answer: 2
+    },
+    {
+      q: "What should you do before clicking an unexpected link?",
+      options: ["Click it immediately", "Verify the sender and destination", "Send it to everyone", "Disable your security software"],
+      answer: 1
+    }
+    ,{
+      q: "What is the safest way to use public Wi-Fi for sensitive tasks?",
+      options: ["Use any network with a familiar name", "Avoid sensitive sign-ins unless you can verify the network and use a secure connection", "Turn off your device lock", "Share the network password publicly"],
+      answer: 1
+    },
+    {
+      q: "A download prompt appears unexpectedly. What should you do?",
+      options: ["Install it to close the prompt", "Download only from the software maker’s official source", "Disable device protections", "Open every attached file"],
+      answer: 1
+    },
+    {
+      q: "Before buying from an unfamiliar online shop, you should…",
+      options: ["Check the seller and site independently", "Trust a countdown timer", "Pay by gift card", "Ignore the return policy"],
+      answer: 0
+    },
+    {
+      q: "Why review app permissions?",
+      options: ["Apps need every permission to work", "To limit access to data and features an app doesn’t need", "It makes passwords public", "It disables updates"],
+      answer: 1
+    },
+    {
+      q: "What does two-step verification add?",
+      options: ["A second check during sign-in", "A public copy of your password", "Automatic password sharing", "A guarantee against every attack"],
+      answer: 0
+    }
+  ];
+
+  let current = 0;
+  let score = 0;
+  let answered = false;
+
+  const nextBtn = document.getElementById("nextBtn");
+
+  function loadQuestion() {
+    const item = questions[current];
+    document.getElementById("questionNumber").textContent = `Question ${current + 1} of ${questions.length}`;
+    document.getElementById("question").textContent = item.q;
+
+    const options = document.getElementById("options");
+    options.innerHTML = "";
+    item.options.forEach((option, index) => {
+      const btn = document.createElement("button");
+      btn.className = "option";
+      btn.textContent = option;
+      btn.onclick = () => selectAnswer(index, btn);
+      options.appendChild(btn);
+    });
+
+    nextBtn.disabled = true;
+    nextBtn.textContent = current === questions.length - 1 ? "Finish Quiz" : "Next Question";
+    nextBtn.onclick = nextQuestion;
+    answered = false;
+  }
+
+  function selectAnswer(index, clicked) {
+    if (answered) return;
+    answered = true;
+
+    const item = questions[current];
+    const buttons = document.querySelectorAll(".option");
+
+    buttons[item.answer].classList.add("correct");
+    if (index !== item.answer) {
+      clicked.classList.add("wrong");
+    } else {
+      score++;
+    }
+
+    nextBtn.disabled = false;
+  }
+
+  function nextQuestion() {
+    if (!answered) return;
+
+    if (current < questions.length - 1) {
+      current++;
+      loadQuestion();
+    } else {
+      document.getElementById("questionNumber").textContent = "Quiz Complete";
+      document.getElementById("question").textContent = `You scored ${score} out of ${questions.length}.`;
+      document.getElementById("options").innerHTML = "";
+      nextBtn.textContent = "Restart Quiz";
+      nextBtn.disabled = false;
+      nextBtn.onclick = restartQuiz;
+
+      document.getElementById("quizResult").textContent =
+        score >= questions.length * 0.8 ? "Excellent! You have strong internet safety awareness." :
+        score >= questions.length * 0.6 ? "Good job! Keep improving your cyber safety knowledge." :
+        "Keep learning! Review the safety tips and try again.";
+      recordQuizScore();
+    }
+  }
+
+
+  function getSavedProgress() {
+    try { return JSON.parse(localStorage.getItem("smartguard-learning-v1") || "{}"); }
+    catch (error) { return {}; }
+  }
+
+  function renderLearningProgress() {
+    const saved = getSavedProgress();
+    document.getElementById("lastScore").textContent = saved.last == null ? "—" : `${saved.last}/${questions.length}`;
+    document.getElementById("bestScore").textContent = saved.best == null ? "—" : `${saved.best}/${questions.length}`;
+    document.getElementById("quizCount").textContent = saved.count || 0;
+  }
+
+  function recordQuizScore() {
+    const saved = getSavedProgress();
+    saved.last = score;
+    saved.best = Math.max(saved.best || 0, score);
+    saved.count = (saved.count || 0) + 1;
+    try { localStorage.setItem("smartguard-learning-v1", JSON.stringify(saved)); } catch (error) { /* The quiz still works if storage is unavailable. */ }
+    const actor=sgCurrentSession();
+    if(actor){const history=sgRead(SG_QUIZ_HISTORY_KEY,[]);history.push({email:actor.email,name:actor.name,score,at:new Date().toISOString()});sgWrite(SG_QUIZ_HISTORY_KEY,history.slice(-100));sgLogActivity("quiz completed", "Score: "+score+"/"+questions.length);}
+    renderLearningProgress();
+  }
+
+  function restartQuiz() {
+    current = 0;
+    score = 0;
+    document.getElementById("quizResult").textContent = "";
+    loadQuestion();
+  }
+
+  loadQuestion();
+  renderLearningProgress();
+  
+(function setupCheckup() {
+    const boxes = Array.from(document.querySelectorAll("[data-checkup]"));
+    const status = document.getElementById("checkupStatus");
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem("smartguard-checkup-v1") || "{}"); } catch (error) { saved = {}; }
+    boxes.forEach(box => { box.checked = Boolean(saved[box.dataset.checkup]); });
+    function update() {
+      const state = Object.fromEntries(boxes.map(box => [box.dataset.checkup, box.checked]));
+      const done = boxes.filter(box => box.checked).length;
+      status.textContent = `${done} of ${boxes.length} account-safety actions checked off.`;
+      try { localStorage.setItem("smartguard-checkup-v1", JSON.stringify(state)); } catch (error) { /* Keep this checklist usable when storage is unavailable. */ }
+    }
+    boxes.forEach(box => box.addEventListener("change", update));
+    update();
+  })();
+
+  
+(function setupSafetyChecklist() {
+    const boxes = Array.from(document.querySelectorAll("[data-check]"));
+    const count = document.getElementById("checklistCount");
+    const fill = document.getElementById("checklistFill");
+    const bar = document.querySelector(".checklist-meter");
+    const storageKey = "smartguard-checklist-v1";
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem(storageKey) || "{}"); } catch (error) { saved = {}; }
+    boxes.forEach(box => { box.checked = Boolean(saved[box.dataset.check]); });
+    function update() {
+      const completed = boxes.filter(box => box.checked).length;
+      count.textContent = `${completed} of ${boxes.length} complete`;
+      fill.style.width = `${(completed / boxes.length) * 100}%`;
+      bar.setAttribute("aria-valuenow", completed);
+      const state = Object.fromEntries(boxes.map(box => [box.dataset.check, box.checked]));
+      try { localStorage.setItem(storageKey, JSON.stringify(state)); } catch (error) { /* The checklist remains usable if storage is unavailable. */ }
+    }
+    boxes.forEach(box => box.addEventListener("change", update));
+    update();
+  })();
+
+  
+if (document.getElementById("loginForm")) {
+document.getElementById("loginForm").addEventListener("submit", event => {
+    event.preventDefault();
+    const result = sgLogin(document.getElementById("loginEmail").value.trim(), document.getElementById("loginPassword").value);
+    const message = document.getElementById("loginMsg");
+    if (!result.ok) { message.className = "msg error"; message.textContent = result.message; return; }
+    message.className = "msg success"; message.textContent = "Login successful.";
+    sgLogActivity("login", "Signed in to SmartGuard");
+    refreshAccountNav();
+    setTimeout(() => { location.hash = result.role === "admin" ? "#/admin" : "#/dashboard"; }, 400);
+  });
+
+  }
+if (document.getElementById("adminLoginForm")) {
+  document.getElementById("adminLoginForm").addEventListener("submit", event => {
+    event.preventDefault();
+    const username = document.getElementById("adminUsername").value.trim();
+    const password = document.getElementById("adminPassword").value;
+    const message = document.getElementById("adminLoginMsg");
+    if (username === "Vaibhav26" && password === "12345678") {
+      sgSession.setItem(SG_SESSION_KEY, JSON.stringify({name: "Vaibhav26", email: "Vaibhav26", role: "admin"}));
+      sgLogActivity("admin login", "Administrator signed in to local demo");
+      refreshAccountNav();
+      message.className = "msg success"; message.textContent = "Admin login successful.";
+      setTimeout(() => { location.hash = "#/admin"; }, 250);
+    } else {
+      message.className = "msg error"; message.textContent = "Invalid admin username or password.";
+    }
+  });
+}
+
+if (document.getElementById("signupForm")) {
+document.getElementById("signupForm").addEventListener("submit", event => {
+    event.preventDefault();
+    const name = document.getElementById("signupName").value.trim();
+    const email = document.getElementById("signupEmail").value.trim();
+    const password = document.getElementById("signupPassword").value;
+    const confirm = document.getElementById("signupConfirm").value;
+    const message = document.getElementById("signupMsg");
+    if (password !== confirm) { message.className = "msg error"; message.textContent = "Passwords do not match."; return; }
+    const result = sgCreateUser(name, email, password, "user");
+    if (!result.ok) { message.className = "msg error"; message.textContent = result.message; return; }
+    message.className = "msg success"; message.textContent = "Account created. You can now log in.";
+    sgLogActivity("account created", "New standard user account: " + email);
+    setTimeout(() => { location.hash = "#/login"; }, 700);
+  });
+
+  }
+/* ---------- Local demo activity, report workflow and dashboards ---------- */
+const SG_ACTIVITY_KEY = "sg_demo_activity_v2";
+const SG_REPORTS_KEY = "sg_demo_reports_v2";
+const SG_QUIZ_HISTORY_KEY = "sg_demo_quiz_history_v2";
+function sgRead(key, fallback=[]) { try { const v=JSON.parse(localStorage.getItem(key)||"null"); return v==null?fallback:v; } catch(e) { return fallback; } }
+function sgWrite(key,value) { try { localStorage.setItem(key,JSON.stringify(value)); return true; } catch(e) { return false; } }
+function sgActor(){const s=sgCurrentSession();return s?{name:s.name,email:s.email,role:s.role}:{name:"Guest",email:"",role:"guest"};}
+function sgLogActivity(action,details="") { const a=sgActor();const events=sgRead(SG_ACTIVITY_KEY,[]);events.unshift({id:"act_"+Date.now()+"_"+Math.random().toString(36).slice(2,7),at:new Date().toISOString(),name:a.name,email:a.email,action,details:String(details).slice(0,240)});sgWrite(SG_ACTIVITY_KEY,events.slice(0,500)); }
+function sgFormatDate(value){const d=new Date(value);return Number.isNaN(d.getTime())?"—":d.toLocaleString([], {dateStyle:"medium",timeStyle:"short"});}
+function sgEsc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function sgReports(){return sgRead(SG_REPORTS_KEY,[])}
+function sgSaveReports(items){sgWrite(SG_REPORTS_KEY,items)}
+function sgPill(status){const c=status==="Resolved"?"resolved":status==="Under Review"?"review":"pending";return `<span class="sg-pill ${c}">${sgEsc(status)}</span>`;}
+function sgDrawLineChart(canvasId,values,labels,emptyId){const canvas=document.getElementById(canvasId);if(!canvas)return;const empty=document.getElementById(emptyId);const dpr=window.devicePixelRatio||1;const rect=canvas.getBoundingClientRect();const w=Math.max(260,rect.width||520),h=220;canvas.width=w*dpr;canvas.height=h*dpr;canvas.style.height=h+"px";const ctx=canvas.getContext("2d");ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);if(!values.length||values.every(v=>v===0)){if(empty)empty.hidden=false;canvas.hidden=true;return;}if(empty)empty.hidden=true;canvas.hidden=false;const pad={l:28,r:12,t:14,b:34},cw=w-pad.l-pad.r,ch=h-pad.t-pad.b,max=Math.max(4,...values);ctx.font="10px Arial";ctx.strokeStyle="#e8eef4";ctx.fillStyle="#8090a2";ctx.lineWidth=1;for(let i=0;i<=4;i++){const y=pad.t+ch*i/4;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(w-pad.r,y);ctx.stroke();ctx.fillText(String(Math.round(max*(4-i)/4)),2,y+3);}const pts=values.map((v,i)=>({x:pad.l+(values.length===1?cw/2:i*cw/(values.length-1)),y:pad.t+ch-(v/max)*ch}));ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y));ctx.strokeStyle="#0e9488";ctx.lineWidth=2.5;ctx.stroke();ctx.lineTo(pts[pts.length-1].x,pad.t+ch);ctx.lineTo(pts[0].x,pad.t+ch);ctx.closePath();ctx.fillStyle="rgba(14,148,136,.10)";ctx.fill();pts.forEach((p,i)=>{ctx.beginPath();ctx.arc(p.x,p.y,3.5,0,Math.PI*2);ctx.fillStyle="#0e9488";ctx.fill();if(labels[i]&&(i===0||i===labels.length-1||i%Math.ceil(labels.length/5)===0)){ctx.fillStyle="#8090a2";ctx.textAlign="center";ctx.fillText(labels[i],p.x,h-12);}});ctx.textAlign="start";}
+function sgDrawDonut(canvasId,counts,labels,emptyId){const canvas=document.getElementById(canvasId);if(!canvas)return;const empty=document.getElementById(emptyId);const total=counts.reduce((a,b)=>a+b,0);if(!total){canvas.hidden=true;if(empty)empty.hidden=false;return;}canvas.hidden=false;if(empty)empty.hidden=true;const dpr=window.devicePixelRatio||1,rect=canvas.getBoundingClientRect(),w=Math.max(260,rect.width||520),h=220;canvas.width=w*dpr;canvas.height=h*dpr;canvas.style.height=h+"px";const c=canvas.getContext("2d");c.scale(dpr,dpr);c.clearRect(0,0,w,h);const cx=Math.min(w*.35,130),cy=108,r=67,ri=43;const cols=["#e7a83e","#5578d5","#0e9488"];let a=-Math.PI/2;counts.forEach((n,i)=>{if(!n)return;const next=a+n/total*Math.PI*2;c.beginPath();c.arc(cx,cy,r,a,next);c.arc(cx,cy,ri,next,a,true);c.closePath();c.fillStyle=cols[i];c.fill();a=next;});c.textAlign="center";c.fillStyle="#13243a";c.font="bold 24px Arial";c.fillText(total,cx,cy+4);c.font="11px Arial";c.fillStyle="#718196";c.fillText("reports",cx,cy+20);c.textAlign="left";const lx=Math.min(w*.58,230);labels.forEach((lab,i)=>{const y=62+i*38;c.beginPath();c.arc(lx,y,5,0,Math.PI*2);c.fillStyle=cols[i];c.fill();c.fillStyle="#53667b";c.font="12px Arial";c.fillText(lab,lx+12,y+4);c.fillStyle="#13243a";c.font="bold 13px Arial";c.fillText(String(counts[i]),w-30,y+4);});}
+function sgRenderUserDashboard(){const session=sgCurrentSession();if(!session)return;document.getElementById("userDashGreeting").textContent="Welcome back, "+session.name.split(" ")[0];const history=sgRead(SG_QUIZ_HISTORY_KEY,[]).filter(x=>x.email===session.email);const old=sgRead("smartguard-learning-v1",{});const scores=history.length?history:(old.count?[{score:old.last,at:new Date().toISOString(),email:session.email}]:[]);document.getElementById("userQuizCount").textContent=scores.length;document.getElementById("userBestScore").textContent=scores.length?Math.max(...scores.map(x=>Number(x.score)||0))+"/10":"—";const reports=sgReports().filter(r=>r.email===session.email);document.getElementById("userReportCount").textContent=reports.length;const acts=sgRead(SG_ACTIVITY_KEY,[]).filter(a=>a.email===session.email);document.getElementById("userActivityCount").textContent=acts.length;const list=document.getElementById("userActivityList");list.replaceChildren();if(!acts.length)list.innerHTML='<div class="sg-empty">Your activity will appear here as you use SmartGuard.</div>';acts.slice(0,6).forEach(a=>{const el=document.createElement("div");el.className="sg-activity";el.innerHTML=`<span class="sg-activity-icon">${a.action.includes("report")?"🚩":a.action.includes("quiz")?"🧠":a.action.includes("login")?"🔐":"📘"}</span><div><strong>${sgEsc(a.action)}</strong><p>${sgEsc(a.details||"SmartGuard activity")}</p><time>${sgEsc(sgFormatDate(a.at))}</time></div>`;list.appendChild(el);});const rows=document.getElementById("userReportRows");rows.replaceChildren();document.getElementById("userReportsEmpty").hidden=reports.length!==0;if(!reports.length)rows.innerHTML='<tr><td colspan="4" class="muted">No reports yet.</td></tr>';reports.slice(0,30).forEach(r=>{const tr=document.createElement("tr");tr.innerHTML=`<td><strong>${sgEsc(r.title)}</strong><div class="muted">${sgEsc(r.id)}</div></td><td>${sgEsc(r.type)}</td><td>${sgEsc(sgFormatDate(r.at))}</td><td>${sgPill(r.status)}</td>`;rows.appendChild(tr);});const vals=scores.slice(-8).map(x=>Number(x.score)||0);sgDrawLineChart("userScoreChart",vals,vals.map((_,i)=>"#"+(scores.length-vals.length+i+1)),"userScoreChartEmpty");}
+function sgDownloadCSV(filename,rows){const csv=rows.map(row=>row.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8;"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+function sgRenderAdmin(){const session=sgCurrentSession();if(!session||session.role!=="admin"){location.hash="#/admin-login";return;}const users=sgGetUsers(),reports=sgReports(),activity=sgRead(SG_ACTIVITY_KEY,[]);document.getElementById("whoLabel").textContent="Signed in as "+session.name;document.getElementById("totalUsers").textContent=users.length;document.getElementById("totalStandard").textContent=users.filter(u=>u.role!=="admin").length;document.getElementById("adminReportCount").textContent=reports.length;document.getElementById("adminPendingCount").textContent=reports.filter(r=>r.status!=="Resolved").length;
+const days=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const key=d.toLocaleDateString();days.push({key,label:d.toLocaleDateString([], {month:"short",day:"numeric"}),count:activity.filter(a=>new Date(a.at).toLocaleDateString()===key).length});}sgDrawLineChart("adminActivityChart",days.map(d=>d.count),days.map(d=>d.label),"adminActivityEmpty");sgDrawDonut("adminReportChart",[reports.filter(r=>r.status==="Submitted").length,reports.filter(r=>r.status==="Under Review").length,reports.filter(r=>r.status==="Resolved").length],["Submitted","Under review","Resolved"],"adminReportEmpty");
+const q=(document.getElementById("reportSearch").value||"").toLowerCase(),status=document.getElementById("reportStatusFilter").value,type=document.getElementById("reportTypeFilter").value;const reportRows=document.getElementById("adminReportRows");reportRows.replaceChildren();const filtered=reports.filter(r=>(status==="all"||r.status===status)&&(type==="all"||r.type===type)&&[r.title,r.name,r.email,r.type,r.details].join(" ").toLowerCase().includes(q));document.getElementById("adminReportsEmpty").hidden=filtered.length!==0;filtered.forEach(r=>{const tr=document.createElement("tr");tr.innerHTML=`<td><strong>${sgEsc(r.title)}</strong><div class="muted">${sgEsc(r.details)}</div>${r.evidence?`<div class="muted">Reference: ${sgEsc(r.evidence)}</div>`:""}</td><td>${sgEsc(r.name)}<div class="muted">${sgEsc(r.email)}</div></td><td>${sgEsc(r.type)}<div class="muted">${sgEsc(r.channel)}</div></td><td>${sgEsc(sgFormatDate(r.at))}</td><td>${sgPill(r.status)}</td><td><select data-report-status="${sgEsc(r.id)}" aria-label="Change status for ${sgEsc(r.title)}"><option ${r.status==="Submitted"?"selected":""}>Submitted</option><option ${r.status==="Under Review"?"selected":""}>Under Review</option><option ${r.status==="Resolved"?"selected":""}>Resolved</option></select></td>`;reportRows.appendChild(tr);});reportRows.querySelectorAll("select[data-report-status]").forEach(sel=>sel.addEventListener("change",()=>{const items=sgReports();const item=items.find(r=>r.id===sel.dataset.reportStatus);if(item){item.status=sel.value;item.updatedAt=new Date().toISOString();sgSaveReports(items);sgLogActivity("report status updated",item.title+" → "+sel.value);sgRenderAdmin();}}));
+const userQ=(document.getElementById("userSearch").value||"").toLowerCase(),tbody=document.getElementById("userTableBody");tbody.replaceChildren();const filteredUsers=users.filter(u=>(u.name+" "+u.email).toLowerCase().includes(userQ));document.getElementById("usersEmpty").hidden=filteredUsers.length!==0;filteredUsers.forEach(user=>{const tr=document.createElement("tr");tr.innerHTML=`<td>${sgEsc(user.name)}</td><td>${sgEsc(user.email)}</td><td><span class="sg-pill ${user.role==="admin"?"review":""}">${sgEsc(user.role)}</span></td><td>${sgEsc(sgFormatDate(user.createdAt))}</td><td>${user.role==="admin"?"—":`<button class="small-btn" data-remove-user="${sgEsc(user.email)}" type="button">Remove</button>`}</td>`;tbody.appendChild(tr);});tbody.querySelectorAll("[data-remove-user]").forEach(btn=>btn.addEventListener("click",()=>{if(!confirm("Remove this local demo account? This cannot be undone."))return;sgSaveUsers(sgGetUsers().filter(u=>u.email!==btn.dataset.removeUser));sgLogActivity("account removed",btn.dataset.removeUser);sgRenderAdmin();}));
+const actRows=document.getElementById("adminActivityRows");actRows.replaceChildren();document.getElementById("adminActivityRowsEmpty").hidden=activity.length!==0;activity.slice(0,50).forEach(a=>{const tr=document.createElement("tr");tr.innerHTML=`<td>${sgEsc(sgFormatDate(a.at))}</td><td>${sgEsc(a.name)}<div class="muted">${sgEsc(a.email)}</div></td><td>${sgEsc(a.action)}</td><td>${sgEsc(a.details)}</td>`;actRows.appendChild(tr);});}
+window.renderMergedUsers=sgRenderAdmin;
+const reportForm=document.getElementById("scamReportForm");if(reportForm){reportForm.addEventListener("submit",e=>{e.preventDefault();const actor=sgCurrentSession();const msg=document.getElementById("reportFormMsg");if(!actor||actor.role!=="user"){msg.className="msg error";msg.textContent="Please create a user account or log in as a standard user before submitting a report.";return;}const item={id:"SG-"+Date.now().toString().slice(-8),name:actor.name,email:actor.email,type:document.getElementById("reportType").value,channel:document.getElementById("reportChannel").value,title:document.getElementById("reportTitle").value.trim(),details:document.getElementById("reportDetails").value.trim(),evidence:document.getElementById("reportEvidence").value.trim(),status:"Submitted",at:new Date().toISOString()};const items=sgReports();items.unshift(item);sgSaveReports(items);sgLogActivity("scam report submitted",item.title);reportForm.reset();msg.className="msg success";msg.textContent="Report saved to this browser demo. It has not been sent to an authority or server.";});}
+const searchBindings=[["reportSearch","input"],["reportStatusFilter","change"],["reportTypeFilter","change"],["userSearch","input"]];searchBindings.forEach(([id,event])=>{const el=document.getElementById(id);if(el)el.addEventListener(event,()=>sgRenderAdmin());});
+document.getElementById("adminLogout").addEventListener("click",()=>{sgLogActivity("admin logout");sgLogout();refreshAccountNav();location.hash="#/admin-login";});
+document.getElementById("exportReportsBtn").addEventListener("click",()=>{const items=sgReports();sgDownloadCSV("smartguard-reports-demo.csv",[["ID","Reporter","Email","Type","Channel","Title","Details","Reference","Status","Submitted"],...items.map(r=>[r.id,r.name,r.email,r.type,r.channel,r.title,r.details,r.evidence,r.status,r.at])]);});
+document.getElementById("exportActivityBtn").addEventListener("click",()=>{const items=sgRead(SG_ACTIVITY_KEY,[]);sgDownloadCSV("smartguard-activity-demo.csv",[["Timestamp","Name","Email","Action","Details"],...items.map(a=>[a.at,a.name,a.email,a.action,a.details])]);});
+
+const ROUTES = ["home","learn","tools","quiz","tips","checkup","report","login","signup","dashboard","admin-login","admin"];
+const TITLES = {home:"SmartGuard - Internet Safety Awareness",learn:"Learn",tools:"Safety Tools",quiz:"Cyber Safety Quiz",tips:"Safety Tips",checkup:"Privacy & Account Checkup",report:"How to Report a Scam",login:"Log In",signup:"Sign Up",dashboard:"My Dashboard","admin-login":"Admin Login",admin:"Admin",notfound:"Page not found"};
+function route() {
+  const h = location.hash;
+  if (h && !h.startsWith("#/")) return;
+  let name = h.replace(/^#\//, "").split("?")[0] || "home";
+  if (!ROUTES.includes(name)) name = "notfound";
+  if (name === "admin") {
+    const s = sgCurrentSession();
+    if (!s || s.role !== "admin") { location.hash = "#/admin-login"; return; }
+  }
+  if (name === "dashboard") {
+    const s = sgCurrentSession();
+    if (!s || s.role !== "user") { location.hash = "#/login"; return; }
+  }
+  document.querySelectorAll(".page").forEach(p => { p.hidden = p.id !== "page-" + name; });
+  document.querySelectorAll(".nav-links a").forEach(a => {
+    const on = a.getAttribute("href") === (name === "home" ? "#/" : "#/" + name);
+    a.classList.toggle("active", on);
+    if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+  });
+  document.querySelectorAll(".msg").forEach(m => { m.className = "msg"; m.textContent = ""; });
+  document.querySelectorAll("#loginForm, #signupForm, #adminLoginForm").forEach(f => f.reset());
+  document.title = name === "home" ? TITLES.home : TITLES[name] + " - SmartGuard";
+  document.getElementById("navLinks").classList.remove("open");
+  document.getElementById("menuBtn").setAttribute("aria-expanded", "false");
+  refreshAccountNav();
+  if (["learn","tools","quiz","tips","checkup"].includes(name) && sgCurrentSession()) sgLogActivity("opened " + name, "Visited the " + name + " section");
+  if (name === "report") { const s=sgCurrentSession(); const notice=document.getElementById("reportAuthNotice"); if(notice) notice.textContent=(s&&s.role==="user")?"Signed in as "+s.name+". Reports will be associated with this account in this browser.":"Log in with a standard user account to submit a report. Reports are saved in this browser only; they are not sent to authorities."; }
+  if (name === "admin") window.renderMergedUsers();
+  if (name === "dashboard") { sgRenderUserDashboard(); }
+  window.scrollTo(0, 0);
+}
+document.getElementById("menuBtn").addEventListener("click", () => {
+  const open = document.getElementById("navLinks").classList.toggle("open");
+  document.getElementById("menuBtn").setAttribute("aria-expanded", String(open));
+});
+window.addEventListener("hashchange", route);
+window.addEventListener("resize",()=>{const active=(location.hash||"#/ ").replace(/^#\//,"").split("?")[0];if(active==="admin")sgRenderAdmin();if(active==="dashboard")sgRenderUserDashboard();});
+route();
+
+</script>
+</body>
+</html>
